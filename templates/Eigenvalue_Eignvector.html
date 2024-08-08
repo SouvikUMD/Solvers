@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <form action="{{ url_for("upload_form_eig_solver")}}" method="post" action="/eigvalue_eigvector_solver">
+    <label for="Q">Enter a matrix:</label>
+    <br>
+    <input type="text" id="Q" name="qmatrix" size=75
+    placeholder="Integer or float followed by comma. To start another row, include a semicolon (;).">
+    <button type="submit">Enter</button>
+    <a href="/">Back to Home</a>
+</body>
+
+</html>

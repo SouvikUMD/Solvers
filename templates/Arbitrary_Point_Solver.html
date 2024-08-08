@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css">
+</head>
+
+
+
+<body>
+    <div class="card text-center mt-5 shadow-lg p-3 bg-white rounded" style="width: 36rem;margin: auto;text-transform: uppercase;">
+        <form action="{{ url_for("select_pts_for_arbitrary_pt_solver")}}" method="post" action="/arbitary_pt_solver">
+        <label type="text">Enter src coordinates (Enter two inputs x and y):</label>
+        <br>
+        <label for="x">x:</label> 
+        <input type="text" id="x" name="xcoord" width=300 placeholder="Integer or float">
+        <label for="y">y:</label> 
+        <input type="text" id="y" name="ycoord" width=300 placeholder="Integer or float">
+        <br>
+        <br>
+        <label type="text">Enter arbitrary points (Enter two inputs x0 and y0):</label>
+        <br>
+        <label for="x0">x0:</label> 
+        <input type="text" id="x0" name="xarb" width=300 placeholder="Integer or float">
+        <label for="y0">y0:</label> 
+        <input type="text" id="y0" name="yarb" width=300 placeholder="Integer or float">
+        <br>
+        <br>
+        <label type="text">Enter rotation angle:</label>
+        <label for="deg">Degree:</label> 
+        <input type="text" id="deg" name="angle" width=300 placeholder="degrees">
+        <br>
+        <label type="text">How would you rotate (x, y, or z axis):</label>
+        <input type="text" id="axis_sel" name="axis" width=300 placeholder="x, y, or z-axis">
+        <button type="submit">Enter</button>
+        <a href="/">Back to Home</a>
+        
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="card text-center mt-5 shadow-lg p-3 bg-white rounded" style="width: 36rem;margin: auto;">
+         <form action="{{ url_for("select_pts_homography")}}" method="post" action="/homography">
+         <label type="text">Enter source points:</label>
+         <input type="text" id="src_pts" name="src_coord" size=50 
+         placeholder="xs1,ys1;xs2,ys2;...;xsn, ysn">
+         <br>
+         <label type="text">Enter Destination Points:</label>
+         <input type="text" id="dst_pts" name="dst_coord" size=50 
+         placeholder="xd1,yd1;xd2,yd2;...;xdn, ydn">
+         <br>
+         <button type="submit">Enter</button>
+         <br>
+         <a href="/">Back to Home</a>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
