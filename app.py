@@ -198,25 +198,25 @@ def upload_form_arbitrary_pt():
 def select_pts_for_arbitrary_pt_solver():
   #print("Enter src coordinates (Enter two inputs x and y): ")
   x= float(request.form.get("xcoord"))
-  if x.isEmpty() or not isinstance(float(x), float):
-      error_msg_text()
+  #if x.isEmpty() or not isinstance(float(x), float):
+  #    error_msg_text()
   y= float(request.form.get("ycoord"))
-  if y.isEmpty() or not isinstance(float(y), float):
-      error_msg_text()
+  #if y.isEmpty() or not isinstance(float(y), float):
+  #    error_msg_text()
   #x = int(input()); y = int(input())
   #print("Enter arbitrary points (Enter two inputs x0 and y0): ")
   #x0 = int(input()); y0 = int(input())
   x0 = float(request.form.get("xarb"))
-  if x0.isEmpty() or not isinstance(float(x0), float):
-      error_msg_text()
+  #if x0.isEmpty() or not isinstance(float(x0), float):
+  #    error_msg_text()
   y0 = float(request.form.get("yarb"))
-  if y0.isEmpty() or not isinstance(float(y0), float):
-      error_msg_text()
+  #if y0.isEmpty() or not isinstance(float(y0), float):
+  #    error_msg_text()
   #print("Enter rotation angle (in degrees)")
   #deg = int(input())
   deg = float(request.form.get("angle"))
-  if deg.isEmpty() or not isinstance(float(deg), float):
-      error_msg_text()
+  #if deg.isEmpty() or not isinstance(float(deg), float):
+  #    error_msg_text()
   #print("How would you rotate (x, y, or z axis): ")
   axis_sel = request.form.get("axis")
   x_dst, y_dst = rotate_arbitrary(x, y, x0, y0, deg, axis_sel)
