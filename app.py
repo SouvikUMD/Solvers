@@ -265,26 +265,6 @@ def select_pts_homography():
   homography_summary = disp_src_pts +  disp_dst_pts + disp_H + disp_diff
   return homography_summary
 
-
-@app.route('/name')
-def upload_form_name():
-    return render_template("Name.html")
-
-@app.route('/name', methods=['GET', 'POST'])
-def display_name():
-    firstname = request.form.get("fname")
-    if firstname.isEmpty() or isinstance(float(firstname), float):
-        error_msg_text()
-    lastname = request.form.get("lname")
-    display_text = "Hello! My name is {0} {1}.".format(firstname, lastname)
-    if lastname.isEmpty() or isinstance(float(lastname), float):
-        error_msg_text()
-    return display_text
-
-@app.route('/hello_world')
-def hello_world():
-    return render_template("hello_world.html")
-
 @app.route('/')
 def home():
     return render_template("home.html")
