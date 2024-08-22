@@ -6,14 +6,47 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css">
 </head>
+<style>
+input[type=text], select {
+  
+  text: center;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 3px solid blue;
+  border-radius: 4px;
+  box-sizing: border-box;
+  box-resize: horizontal;
+}
 
+button[type=submit] {
+  
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+</style>
 <body>
     <form action="{{ url_for("upload_form_eig_solver")}}" method="post" action="/eigvalue_eigvector_solver">
-    <label for="Q">Enter a matrix:</label>
+    <label for="Q">Enter A Matrix:</label>
     <br>
-    <input type="text" id="Q" name="qmatrix" size=75
-    placeholder="Integer or float followed by comma. To start another row, include a semicolon (;).">
-    <button type="submit">Enter</button>
+    <input type="text" id="Q" name="qmatrix" size=150,font-style:bold,
+    placeholder="Integer or float followed by comma. To start another row, include a semicolon (;)."><BR>
+    <button type="submit">Enter</button><BR>
     <a href="/">Back to Home</a>
 </body>
 

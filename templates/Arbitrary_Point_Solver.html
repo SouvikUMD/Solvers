@@ -7,6 +7,37 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css">
 </head>
 
+<style>
+input[type=text], select {
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 3px solid blue;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+button[type=submit] {
+  
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+</style>
 
 
 <body>
@@ -33,8 +64,8 @@
         <input type="text" id="deg" name="angle" width=300 placeholder="degrees">
         <br>
         <label type="text">How would you rotate (x, y, or z axis):</label>
-        <input type="text" id="axis_sel" name="axis" width=300 placeholder="x, y, or z-axis">
-        <button type="submit">Enter</button>
+        <input type="text" id="axis_sel" name="axis" width=300 placeholder="x, y, or z-axis"><br>
+        <button type="submit">Enter</button><br>
         <a href="/">Back to Home</a>
         
     </div>
