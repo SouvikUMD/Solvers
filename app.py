@@ -7,12 +7,48 @@ Created on Wed Jul 17 16:33:58 2024
 
 import numpy as np
 import math
-from flask import Flask, render_template, request
+import io
+from flask import Flask, render_template, request, Response
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+
 
 app = Flask(__name__)
 
 
 # Helper Functions.
+"""Eigenvector Eignevalue Solver: Solves for Eignenvectors and Eigenvalues. 
+The NumPy function np.linalg.elg() was used."""
+def create_figure(D, Dn, WB, NA, VT, VA, ni):
+    q = 1.6e-19  # Charge of electron
+    A = (D**2)*1e-12 # BJT Cross-Sectional Area converted to m^2
+    # Dn = 20 cm^2/s (m^2)
+    # 0.5 um
+    npo = (ni**2/NA)*1e6   # npo = ni^2/NA (/m^3)
+
+    # VCE represents the collector-emitter voltage
+    VCE = np.arange(0, 5, 0.001)
+    # VBE = 0.4 V
+    IC1 = ((q*A*Dn)/WB)*npo*math.exp(0.4/VT)*(1 + VCE/VA);
+    fig = plt.figure(figure=(16,6))
+    plt.plot(VCE, IC1)
+    #VBE = 0.5 V
+    IC2 = ((q*A*Dn)/WB)*npo*math.exp(0.5/VT)*(1 + VCE/VA);
+    plt.plot(VCE, IC2)
+    # VBE = 0.6 V
+    IC3 = ((q*A*Dn)/WB)*npo*math.exp(0.6/VT)*(1 + VCE/VA);
+    plt.plot(VCE, IC3)
+    plt.xlabel('VCE(V)')
+    plt.ylabel('IC(V)')
+    plt.title('Collector Current vs. Collector-Emitter Voltage')
+    plt.legend(['Vbe = 0.4 V','Vbe = 0.5 V','Vbe = 0.6 V'])
+    return q, A, npo, fig
+
+def display_info(q, A, npo, fig):
+    output = io.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
 
 """Eigenvector Eignevalue Solver: Solves for Eignenvectors and Eigenvalues. 
 The NumPy function np.linalg.elg() was used."""
@@ -35,17 +71,16 @@ def rotate_arbitrary(x, y, x0, y0, theta, ax):
   # Convert theta to radians (theta_rad).
   theta_rad = float(theta) * np.pi/180
   # Rotation Matrix
-  # np.cos(theta_rad), np.sin(theta_rad)
   # Rz: Rotation Matrix about the z-axis
-  if (ax == 'z') or ('z-axis' in ax):
+  if (ax.lower() == 'z') or ('z-axis' in ax):
     R = np.mat([[np.cos(theta_rad), -np.sin(theta_rad), 0.0],
               [np.sin(theta_rad), np.cos(theta_rad), 0.0],
               [0.0, 0.0, 1.0]])
-  elif (ax == 'x') or ('x-axis' in ax):
+  elif (ax.lower() == 'x') or ('x-axis' in ax):
     R = np.mat([[1.0, 0.0, 0.0],
             [0.0, np.cos(theta_rad), -np.sin(theta_rad)],
             [0.0, np.sin(theta_rad), np.cos(theta_rad)]])
-  elif (ax == 'y') or ('y-axis' in ax):
+  elif (ax.lower() == 'y') or ('y-axis' in ax):
     R = np.mat([[np.cos(theta_rad), 0.0, np.sin(theta_rad)],
             [0.0, 1.0, 0.0],
             [-np.sin(theta_rad), 0.0, np.cos(theta_rad)]])
@@ -56,7 +91,7 @@ def rotate_arbitrary(x, y, x0, y0, theta, ax):
   T_pos_theta = np.mat([[1.0, 0.0, x0], [0.0, 1.0, y0], [0.0, 0.0, 1.0]])
   #T_neg_theta: Translation Matrix by (-x0, -y0).
   T_neg_theta = np.mat([[1.0, 0.0, -x0], [0.0, 1.0, -y0], [0.0, 0.0, 1.0]])
-  print("T_neg_theta: ", T_neg_theta)
+  #print("T_neg_theta: ", T_neg_theta)
   # Perform matrix multiplication between T+, R_x/R_y/R_z, T-, and xvector.
   xtilda_vec = T_pos_theta @ R @ T_neg_theta @ xvector
   #xtilda_vec = T_pos_theta @ R_z @ T_neg_theta @ xvector
@@ -81,7 +116,8 @@ def compute_homography(src, dst):
 
   H = np.identity(3) # Create identity matrix of H.
   if (src.shape[1] != 2) or (dst.shape[1] != 2) or (len(src) != len(dst)):
-    print("Will not be calculated due to mismatched shapes. Please click the back button and try again.")
+    print("Will not be calculated due to mismatched shapes. \
+          Please click the back button and try again.")
     return H
 
   # Need to derive Q. From Q*a = 0.
@@ -160,13 +196,12 @@ def upload_form_eig_solver():
 
 @app.route('/eigvalue_eigvector_solver', methods=['GET', 'POST'])
 def eigvalue_eigvector_solver():
-  #print("Enter a matrix (Integer or floar followed by comma. To start another \
-  #row, include a semicolon (;).)")
-  # Q = np.matrix('2, 3, 4; 5, 6, 7')
-  # Q = input()
   Q = request.form.get("qmatrix")
   try:
       M_var = np.matrix(Q)
+      if M_var.shape[1] == 0:
+          return "Blank Matrix provided.Please click the back\
+              button and try again."
   except ValueError:
       return "Cannot convert provided input into matrix. Please click the back\
           button and try again."
@@ -196,35 +231,43 @@ def upload_form_arbitrary_pt():
 
 @app.route('/arbitary_pt_solver', methods=['GET', 'POST'])
 def select_pts_for_arbitrary_pt_solver():
-  #print("Enter src coordinates (Enter two inputs x and y): ")
-  x= float(request.form.get("xcoord"))
-  #if x.isEmpty() or not isinstance(float(x), float):
-  #    error_msg_text()
-  y= float(request.form.get("ycoord"))
-  #if y.isEmpty() or not isinstance(float(y), float):
-  #    error_msg_text()
-  #x = int(input()); y = int(input())
-  #print("Enter arbitrary points (Enter two inputs x0 and y0): ")
-  #x0 = int(input()); y0 = int(input())
-  x0 = float(request.form.get("xarb"))
-  #if x0.isEmpty() or not isinstance(float(x0), float):
-  #    error_msg_text()
-  y0 = float(request.form.get("yarb"))
-  #if y0.isEmpty() or not isinstance(float(y0), float):
-  #    error_msg_text()
-  #print("Enter rotation angle (in degrees)")
-  #deg = int(input())
-  deg = float(request.form.get("angle"))
-  #if deg.isEmpty() or not isinstance(float(deg), float):
-  #    error_msg_text()
-  #print("How would you rotate (x, y, or z axis): ")
+  x= request.form.get("xcoord")
+  try: 
+      x = float(x)
+  except: 
+      return error_msg_text()
+  y= request.form.get("ycoord")
+  try:
+      y = float(y)
+  except:
+      return error_msg_text()
+  x0 = request.form.get("xarb")
+  try:
+      x0 = float(x0)
+  except:
+      return error_msg_text()
+  y0 = request.form.get("yarb")
+  try:
+      y0 = float(y0)
+  except:
+      return error_msg_text()
+  deg = request.form.get("angle")
+
+  try:
+      deg = float(deg)
+  except:
+      return error_msg_text()
   axis_sel = request.form.get("axis")
+  if (not axis_sel.lower() == 'x') and (not axis_sel.lower() == 'x-axis') \
+      and (not axis_sel.lower() == 'y') and (not axis_sel.lower() == 'y-axis') \
+      and (not axis_sel.lower() == 'z') and (not axis_sel.lower() == 'z-axis'):
+          return error_msg_text()
+          
   x_dst, y_dst = rotate_arbitrary(x, y, x0, y0, deg, axis_sel)
   print_src = f'src_coordinates (x, y): ({str(x)}, {str(y)})'
   print_arb = f'arbitrary points (x0, y0): ({str(x0)}, {str(y0)})'
   print_deg = f'{str(deg)} degrees'
   print_dst = f'''dst_coordinates (x', y'): ({str(x_dst)}, {str(y_dst)})'''
-  # summary = print_src + '\n' +  print_arb + '\n' + print_deg + '\n' + print_dst
   summary= print_src + '<br/>' +  print_arb + '<br/>' + print_deg + '<br/>' + \
       print_dst
   return summary
@@ -240,6 +283,9 @@ def select_pts_homography():
   src_pts = request.form.get("src_coord")
   try:
       src_pts = np.matrix(src_pts)
+      if src_pts.shape[1] == 0:
+          return "Blank Matrix provided.Please click the back\
+              button and try again."
   except ValueError:
       return error_msg_text()
       
@@ -249,21 +295,75 @@ def select_pts_homography():
   dst_pts = request.form.get("dst_coord")
   try:
       dst_pts = np.matrix(dst_pts)
+      if dst_pts.shape[1] == 0:
+          return "Blank Matrix provided.Please click the back\
+              button and try again."
   except ValueError:
       return error_msg_text()
 
-  print(type(dst_pts))
+  #print(type(dst_pts))
   disp_dst_pts = f'dst_pts: {dst_pts}' + '<br/>'
   H = compute_homography(src_pts, dst_pts)
   disp_H = f'H(Homography): {H}' + '<br/>'
   match_pts = apply_homography(src_pts, H)
-  print(type(match_pts))
   disp_match_pts = f'match_pts: {match_pts}' + '<br/>'
   diff = np.square(match_pts - dst_pts).sum()
   disp_diff = f'Your 3rd solution differs from our solution by: {diff}'
 
   homography_summary = disp_src_pts +  disp_dst_pts + disp_H + disp_diff
   return homography_summary
+
+@app.route('/VCE_BJT_Form')
+def upload_form_VCE_BJT():
+    return render_template("VCE_BJT_Form.html")
+
+@app.route('/VCE_BJT_Form', methods=['GET', 'POST'])
+def enter_VCE_BJT_info():
+  D = request.form.get("dimension")
+  try:
+      D = float(D)
+  except:
+      return error_msg_text()
+
+  Dn = request.form.get("Dn")
+  try:
+      Dn = float(Dn)
+  except:
+      return error_msg_text()
+  
+  WB = request.form.get("WB")
+  try:
+      WB = float(WB)
+  except:
+      return error_msg_text()
+  
+  NA = request.form.get("NA")
+
+  try:
+      NA = float(NA)
+  except:
+      return error_msg_text()
+  
+  VT = request.form.get("Voltage Transformer")
+  try:
+      VT = float(VT)
+  except:
+      return error_msg_text()
+  
+  VA = request.form.get("Voltage A")
+  try:
+      VA = float(VA)
+  except:
+      return error_msg_text()
+  
+  ni = request.form.get("ni")
+  try:
+      ni = float(ni)
+  except:
+      return error_msg_text()
+  
+  q, A, npo, fig = create_figure(D, Dn, WB, NA, VT, VA, ni)
+  return display_info(q, A, npo, fig)
 
 @app.route('/')
 def home():
