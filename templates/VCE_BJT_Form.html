@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css">
+</head>
+
+
+
+<body>
+    <div class="card text-center mt-5 shadow-lg p-3 bg-white rounded" 
+    style="width: 36rem;margin: auto;text-transform: uppercase;">
+        <form action="{{ url_for("enter_VCE_BJT_info")}}" 
+        method="post" action="/VCE_BJT_Form">
+        <label type="text">Creating a VCE-BJT Plot:</label>
+        <br>
+        <label for="D">D:</label> 
+        <input type="text" id="d" name="dimension" width=300 
+        placeholder="Integer or float">
+        <label for="Dn">Dn:</label> 
+        <input type="text" id="Dn" name="Dn" width=300 
+        placeholder="Integer or float">
+        <br>
+        <label for="WB">WB:</label> 
+        <input type="text" id="WB" name="WB" width=300 
+        placeholder="Integer or float">
+        <label for="NA">NA:</label> 
+        <input type="text" id="NA" name="NA" width=300 
+        placeholder="Integer or float">
+        <br>
+        <label for="VT">VT:</label> 
+        <input type="text" id="VT" name="Voltage Transformer" width=300 
+        placeholder="Integer or float">
+        <label for="VA">VA:</label> 
+        <input type="text" id="VA" name="Voltage A" width=300 
+        placeholder="Integer or float">
+        <br>
+        <label for="ni">ni:</label> 
+        <input type="text" id="ni" name="ni" width=300 
+        placeholder="Integer or float">
+        <button type="submit">Enter</button>
+        <a href="/">Back to Home</a>
+        
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
